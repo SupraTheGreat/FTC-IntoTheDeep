@@ -41,10 +41,14 @@ public class MoveTankAuto extends LinearOpMode {
     private DcMotor rightMotor;
     private Servo servo;
     IMU imu; // inertial measurement unit
+    static final double DRIVE_SPEED = 0.6; // Speed of driving straight, when leftmotor and rightmotor are equal
+    static final double TURN_SPEED = 0.5; // Speed of turning, when leftmotor and rightmotor are NOT equal
     
-    public void encoderDrive(double speed, double inches) {
+    public void encoderDrive(double speed, double leftinches, double rightinches) {
         double TICKS_PER_INCH = 25.89;
-        int target = (int)(inches * TICKS_PER_INCH);
+        int righttarget = (int)(inches * TICKS_PER_INCH);
+        newLeftTarget = (int)(leftInches * TICKS_PER_INCH);
+            newRightTarget = (int)(rightInches * TICKS_PER_INCH);
             
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -55,10 +59,10 @@ public class MoveTankAuto extends LinearOpMode {
         leftMotor.setPower(-speed);
         rightMotor.setPower(speed);
             
-        while (opModeIsActive() && rightMotor.getCurrentPosition() < target);
-            
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
+        while (opModeIsActive() && rightMotor.getCurrentPosition() < righttarget && leftMotor.getCurrentPosition() < lefttarget);
+            // Do nothing
+        leftMotor.setPower(0); // Stop left motor
+        rightMotor.setPower(0); // Stop right motor
     }
 
     double getHeading() {
@@ -93,19 +97,14 @@ public class MoveTankAuto extends LinearOpMode {
         
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (driver presses PLAY/START)
         waitForStart();
         
-        encoderDrive(2, 25);
-        encoderTurn(-90, 2);
-        
-        encoderDrive(2, 18);
-        encoderTurn(90, 2);
-        
-        encoderDrive(2, 25);
-        encoderTurn(-90, 2);
-
-        encoderDrive(2, 18);
+        encoderDrive(DRIVE_SPEED, 24, 24); // speed, motor1, motor2
+        encoderDrive(TURN_SPEED, 12, -12); // speed, motor1, motor2
+        encoderDrive(DRIVE_SPEED, -24, -24); // speed, motor1, motor2
+         
+        encoderDrive(TURN_SPEED, 24, -24); // speed, motor1, motor2
 
     }
 }
