@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class AAAAA_ScrimmageThingy extends LinearOpMode {
+public class ScrimmageTeleOp extends LinearOpMode {
     /* Declare OpMode members. */
     public DcMotor  armMotor    = null; //the arm motor
     public CRServo  intake      = null; //the active intake servo
