@@ -39,6 +39,7 @@ public class SecondTeleOp extends LinearOpMode {
     static final double SLIDE_COUNTS_PER_INCH = SLIDE_COUNTS_PER_MOTOR_REV/(1.5*3.1415);
      
      public static double speed = 1.5; // Speed
+     public static int count = 0;
      
      // Claw positions
      final double CLAW_CLOSE = 0.0;
@@ -55,7 +56,7 @@ public class SecondTeleOp extends LinearOpMode {
      // Slides positions
      final double SLIDES_INITIAL = 0.0;
      final double SLIDES_MEDIUM = 0.0;
-     final double SLIDES_SCORE_SPECIMEN = 7.5 * SLIDE_COUNTS_PER_INCH;
+     final double SLIDES_SCORE_SPECIMEN = 7.1 * SLIDE_COUNTS_PER_INCH;
      final double SLIDES_HIGH_BASKET = 30 * SLIDE_COUNTS_PER_INCH;
      final double SLIDES_LOW_BASKET = 15 * SLIDE_COUNTS_PER_INCH;
      final double SLIDES_KP = 0.001; 
@@ -134,10 +135,17 @@ public class SecondTeleOp extends LinearOpMode {
                  }
                  
                  else if (gamepad1.left_trigger > 0.3){
-                    frontLeftMotor.setPower(0);
-                    frontRightMotor.setPower(0);
-                    backLeftMotor.setPower(0);
-                    backRightMotor.setPower(0);
+                    // frontLeftMotor.setPower(0);
+                    // frontRightMotor.setPower(0);
+                    // backLeftMotor.setPower(0);
+                    // backRightMotor.setPower(0);
+                    if (count%2 == 0){
+                        speed = 1.0;
+                    }
+                    else{
+                        speed = 1.5;
+                    }
+                    count += 1;
                  }
 //               /* Here we set the target position of our arm to match the variable that was selected
 //                 by the driver.
@@ -171,6 +179,11 @@ public class SecondTeleOp extends LinearOpMode {
         // Reverse the left side motors.
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE); 
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
          
         slideMotorRight = hardwareMap.get(DcMotor.class, "slideMotorRight");
         slideMotorLeft = hardwareMap.get(DcMotor.class, "slideMotorLeft");
@@ -242,6 +255,7 @@ public class SecondTeleOp extends LinearOpMode {
         slideMotorRight.setPower(0.8);
         slideMotorLeft.setPower(0.8); // Adjust power as needed
         while (opModeIsActive() && slideMotorRight.isBusy()){
+            chassisControl();
             double currentPosition = slideMotorRight.getCurrentPosition();
             double currentError = targetPosition - currentPosition;
             double correction = currentError * SLIDES_KP; 
